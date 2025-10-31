@@ -95,52 +95,147 @@ export const FinancialOverview = () => {
     },
   ], [totalIncome, totalExpenses, netSavings, completedGoals.length, goals.length]);
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.title} className="transition-all hover:shadow-card-hover">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <Icon className={`h-4 w-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className={`text-xs ${stat.color}`}>
-                  {stat.change} from last month
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="transition-all hover:shadow-card-hover">
-          <CardHeader>
-            <CardTitle>Income vs Expenses</CardTitle>
+    <div className="space-y-8">
+      {/* Hero Stats Section */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Featured Net Savings Card */}
+        <Card className="relative overflow-hidden transition-all hover:shadow-card-hover border-2">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-primary opacity-10 rounded-full -mr-16 -mt-16" />
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-medium text-muted-foreground">Net Savings</CardTitle>
+              <div className={`rounded-full p-2 ${netSavings >= 0 ? 'bg-success/10' : 'bg-destructive/10'}`}>
+                <TrendingUp className={`h-5 w-5 ${netSavings >= 0 ? 'text-success' : 'text-destructive'}`} />
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
+            <div className="text-4xl font-bold mb-2">${netSavings.toFixed(2)}</div>
+            <p className={`text-sm font-medium ${netSavings >= 0 ? 'text-success' : 'text-destructive'}`}>
+              {netSavings >= 0 ? 'Great job saving!' : 'Review your expenses'}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Featured Goals Progress Card */}
+        <Card className="relative overflow-hidden transition-all hover:shadow-card-hover border-2">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-success opacity-10 rounded-full -mr-16 -mt-16" />
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-medium text-muted-foreground">Goals Achieved</CardTitle>
+              <div className="rounded-full p-2 bg-primary/10">
+                <Target className="h-5 w-5 text-primary" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold mb-2">{completedGoals.length} of {goals.length}</div>
+            <div className="w-full bg-muted rounded-full h-2.5 mb-2">
+              <div 
+                className="bg-gradient-primary h-2.5 rounded-full transition-all" 
+                style={{ width: `${goals.length > 0 ? (completedGoals.length / goals.length) * 100 : 0}%` }}
+              />
+            </div>
+            <p className="text-sm font-medium text-primary">
+              {goals.length > 0 ? Math.round((completedGoals.length / goals.length) * 100) : 0}% Complete
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Stats Grid */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="transition-all hover:shadow-card-hover">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Income</CardTitle>
+            <div className="rounded-full p-2 bg-success/10">
+              <ArrowUpRight className="h-4 w-4 text-success" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalIncome.toFixed(2)}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="transition-all hover:shadow-card-hover">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Expenses</CardTitle>
+            <div className="rounded-full p-2 bg-destructive/10">
+              <ArrowDownRight className="h-4 w-4 text-destructive" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${totalExpenses.toFixed(2)}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="transition-all hover:shadow-card-hover">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Goals</CardTitle>
+            <div className="rounded-full p-2 bg-warning/10">
+              <Target className="h-4 w-4 text-warning" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{activeGoals.length}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="transition-all hover:shadow-card-hover">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Budget Items</CardTitle>
+            <div className="rounded-full p-2 bg-primary/10">
+              <TrendingUp className="h-4 w-4 text-primary" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{budgets.length}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="transition-all hover:shadow-card-hover">
+          <CardHeader className="border-b bg-muted/30">
+            <CardTitle className="text-lg">Income vs Expenses</CardTitle>
+            <p className="text-sm text-muted-foreground">Track your financial flow over time</p>
+          </CardHeader>
+          <CardContent className="pt-6">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" className="text-xs" />
-                <YAxis className="text-xs" />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" opacity={0.3} />
+                <XAxis 
+                  dataKey="month" 
+                  className="text-xs" 
+                  stroke="hsl(var(--muted-foreground))"
+                />
+                <YAxis 
+                  className="text-xs"
+                  stroke="hsl(var(--muted-foreground))"
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '0.5rem'
+                  }}
+                />
                 <Line 
                   type="monotone" 
                   dataKey="income" 
                   stroke="hsl(var(--success))" 
-                  strokeWidth={2}
-                  dot={{ fill: "hsl(var(--success))" }}
+                  strokeWidth={3}
+                  dot={{ fill: "hsl(var(--success))", r: 4 }}
+                  activeDot={{ r: 6 }}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="expenses" 
                   stroke="hsl(var(--destructive))" 
-                  strokeWidth={2}
-                  dot={{ fill: "hsl(var(--destructive))" }}
+                  strokeWidth={3}
+                  dot={{ fill: "hsl(var(--destructive))", r: 4 }}
+                  activeDot={{ r: 6 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -148,22 +243,42 @@ export const FinancialOverview = () => {
         </Card>
 
         <Card className="transition-all hover:shadow-card-hover">
-          <CardHeader>
-            <CardTitle>Savings Trend</CardTitle>
+          <CardHeader className="border-b bg-muted/30">
+            <CardTitle className="text-lg">Savings Trend</CardTitle>
+            <p className="text-sm text-muted-foreground">Your savings growth over time</p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" className="text-xs" />
-                <YAxis className="text-xs" />
-                <Tooltip />
+                <defs>
+                  <linearGradient id="savingsGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" opacity={0.3} />
+                <XAxis 
+                  dataKey="month" 
+                  className="text-xs"
+                  stroke="hsl(var(--muted-foreground))"
+                />
+                <YAxis 
+                  className="text-xs"
+                  stroke="hsl(var(--muted-foreground))"
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '0.5rem'
+                  }}
+                />
                 <Area 
                   type="monotone" 
                   dataKey="savings" 
                   stroke="hsl(var(--primary))" 
-                  fill="hsl(var(--primary) / 0.2)"
-                  strokeWidth={2}
+                  fill="url(#savingsGradient)"
+                  strokeWidth={3}
                 />
               </AreaChart>
             </ResponsiveContainer>
