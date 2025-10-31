@@ -1,54 +1,63 @@
-import { useState } from "react";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { useState, useEffect } from "react";
 import { FinancialOverview } from "@/components/dashboard/FinancialOverview";
 import { ExpenseTracker } from "@/components/dashboard/ExpenseTracker";
 import { IncomeTracker } from "@/components/dashboard/IncomeTracker";
 import { BudgetProgress } from "@/components/dashboard/BudgetProgress";
 import { GoalsTracker } from "@/components/dashboard/GoalsTracker";
 import { FinancialChatbot } from "@/components/dashboard/FinancialChatbot";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AppSidebar } from "@/components/dashboard/AppSidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeSection, setActiveSection] = useState("overview");
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1) || "overview";
+      setActiveSection(hash);
+    };
+
+    handleHashChange();
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "expenses":
+        return <ExpenseTracker />;
+      case "income":
+        return <IncomeTracker />;
+      case "budget":
+        return <BudgetProgress />;
+      case "goals":
+        return <GoalsTracker />;
+      default:
+        return <FinancialOverview />;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader />
-      
-      <main className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-[600px]">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="expenses">Expenses</TabsTrigger>
-            <TabsTrigger value="income">Income</TabsTrigger>
-            <TabsTrigger value="budget">Budget</TabsTrigger>
-            <TabsTrigger value="goals">Goals</TabsTrigger>
-          </TabsList>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <AppSidebar />
+        
+        <main className="flex-1 flex flex-col min-w-0">
+          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-card px-6">
+            <SidebarTrigger />
+            <div className="flex-1">
+              <h1 className="text-xl font-semibold capitalize">{activeSection}</h1>
+            </div>
+          </header>
+          
+          <div className="flex-1 p-6">
+            {renderContent()}
+          </div>
+        </main>
 
-          <TabsContent value="overview" className="space-y-6">
-            <FinancialOverview />
-          </TabsContent>
-
-          <TabsContent value="expenses" className="space-y-6">
-            <ExpenseTracker />
-          </TabsContent>
-
-          <TabsContent value="income" className="space-y-6">
-            <IncomeTracker />
-          </TabsContent>
-
-          <TabsContent value="budget" className="space-y-6">
-            <BudgetProgress />
-          </TabsContent>
-
-          <TabsContent value="goals" className="space-y-6">
-            <GoalsTracker />
-          </TabsContent>
-        </Tabs>
-      </main>
-
-      <FinancialChatbot />
-    </div>
+        <FinancialChatbot />
+      </div>
+    </SidebarProvider>
   );
 };
 
