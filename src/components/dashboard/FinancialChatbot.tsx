@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, X, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useFinancialData } from "@/contexts/FinancialDataContext";
 
 interface Message {
   id: string;
@@ -12,6 +13,7 @@ interface Message {
 }
 
 export const FinancialChatbot = () => {
+  const { expenses, income, budgets, goals } = useFinancialData();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -49,13 +51,24 @@ export const FinancialChatbot = () => {
     try {
       const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/financial-chat`;
       
+      // Prepare financial context
+      const financialContext = {
+        expenses: expenses.map(e => ({ category: e.category, amount: e.amount, description: e.description, date: e.date })),
+        income: income.map(i => ({ source: i.source, amount: i.amount, description: i.description, date: i.date })),
+        budgets: budgets.map(b => ({ category: b.category, limit: b.limit, spent: b.spent })),
+        goals: goals.map(g => ({ title: g.title, targetAmount: g.targetAmount, currentAmount: g.currentAmount, deadline: g.deadline, isCompleted: g.isCompleted })),
+      };
+      
       const response = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+        body: JSON.stringify({ 
+          messages: [...messages, userMessage],
+          financialData: financialContext
+        }),
       });
 
       if (!response.ok) {

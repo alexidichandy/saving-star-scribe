@@ -5,26 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { PlusCircle, Check, Target } from "lucide-react";
-
-interface Goal {
-  id: string;
-  title: string;
-  targetAmount: number;
-  currentAmount: number;
-  deadline: string;
-  isCompleted: boolean;
-}
-
-const initialGoals: Goal[] = [
-  { id: "1", title: "Emergency Fund", targetAmount: 5000, currentAmount: 2700, deadline: "2025-06-01", isCompleted: false },
-  { id: "2", title: "Vacation Fund", targetAmount: 2000, currentAmount: 800, deadline: "2025-08-01", isCompleted: false },
-  { id: "3", title: "New Laptop", targetAmount: 1500, currentAmount: 1500, deadline: "2025-02-01", isCompleted: true },
-  { id: "4", title: "Investment Portfolio", targetAmount: 10000, currentAmount: 4200, deadline: "2025-12-31", isCompleted: false },
-  { id: "5", title: "Car Down Payment", targetAmount: 3000, currentAmount: 3000, deadline: "2025-01-15", isCompleted: true },
-];
+import { useFinancialData } from "@/contexts/FinancialDataContext";
+import type { Goal } from "@/types/financial";
 
 export const GoalsTracker = () => {
-  const [goals, setGoals] = useState<Goal[]>(initialGoals);
+  const { goals, setGoals } = useFinancialData();
   const [newGoal, setNewGoal] = useState({
     title: "",
     targetAmount: "",

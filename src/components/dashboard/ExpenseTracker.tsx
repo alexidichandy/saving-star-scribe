@@ -6,30 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-
-interface Expense {
-  id: string;
-  category: string;
-  amount: number;
-  description: string;
-  date: string;
-}
+import { useFinancialData } from "@/contexts/FinancialDataContext";
+import type { Expense } from "@/types/financial";
 
 const CATEGORIES = ["Food", "Transport", "Entertainment", "Shopping", "Bills", "Healthcare", "Other"];
 const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#6b7280"];
 
-const initialExpenses: Expense[] = [
-  { id: "1", category: "Food", amount: 450, description: "Groceries & Dining", date: "2025-01-15" },
-  { id: "2", category: "Transport", amount: 200, description: "Gas & Uber", date: "2025-01-10" },
-  { id: "3", category: "Entertainment", amount: 150, description: "Movies & Games", date: "2025-01-05" },
-  { id: "4", category: "Bills", amount: 1200, description: "Rent & Utilities", date: "2025-01-01" },
-  { id: "5", category: "Food", amount: 480, description: "Groceries & Dining", date: "2024-12-15" },
-  { id: "6", category: "Shopping", amount: 320, description: "Clothes & Electronics", date: "2024-12-20" },
-  { id: "7", category: "Bills", amount: 1200, description: "Rent & Utilities", date: "2024-12-01" },
-];
-
 export const ExpenseTracker = () => {
-  const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
+  const { expenses, setExpenses } = useFinancialData();
   const [newExpense, setNewExpense] = useState({
     category: "",
     amount: "",

@@ -6,25 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlusCircle, Trash2 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-
-interface Income {
-  id: string;
-  source: string;
-  amount: number;
-  description: string;
-  date: string;
-}
+import { useFinancialData } from "@/contexts/FinancialDataContext";
+import type { Income } from "@/types/financial";
 
 const SOURCES = ["Salary", "Freelance", "Investment", "Business", "Other"];
 
-const initialIncome: Income[] = [
-  { id: "1", source: "Salary", amount: 4500, description: "Monthly Salary", date: "2025-01-01" },
-  { id: "2", source: "Freelance", amount: 300, description: "Web Design Project", date: "2025-01-15" },
-  { id: "3", source: "Salary", amount: 4500, description: "Monthly Salary", date: "2024-12-01" },
-];
-
 export const IncomeTracker = () => {
-  const [income, setIncome] = useState<Income[]>(initialIncome);
+  const { income, setIncome } = useFinancialData();
   const [newIncome, setNewIncome] = useState({
     source: "",
     amount: "",

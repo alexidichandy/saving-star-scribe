@@ -5,24 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { PlusCircle, Edit2 } from "lucide-react";
-
-interface Budget {
-  id: string;
-  category: string;
-  limit: number;
-  spent: number;
-}
-
-const initialBudgets: Budget[] = [
-  { id: "1", category: "Food", limit: 500, spent: 450 },
-  { id: "2", category: "Transport", limit: 300, spent: 200 },
-  { id: "3", category: "Entertainment", limit: 200, spent: 150 },
-  { id: "4", category: "Shopping", limit: 400, spent: 320 },
-  { id: "5", category: "Bills", limit: 1300, spent: 1200 },
-];
+import { useFinancialData } from "@/contexts/FinancialDataContext";
+import type { Budget } from "@/types/financial";
 
 export const BudgetProgress = () => {
-  const [budgets, setBudgets] = useState<Budget[]>(initialBudgets);
+  const { budgets, setBudgets } = useFinancialData();
   const [newBudget, setNewBudget] = useState({
     category: "",
     limit: "",
