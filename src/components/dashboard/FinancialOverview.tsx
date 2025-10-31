@@ -1,48 +1,99 @@
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowUpRight, ArrowDownRight, TrendingUp, Target } from "lucide-react";
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-
-const monthlyData = [
-  { month: "Dec", income: 4500, expenses: 3200, savings: 1300 },
-  { month: "Jan", income: 4800, expenses: 3400, savings: 1400 },
-];
-
-const stats = [
-  {
-    title: "Total Income",
-    value: "$9,300",
-    change: "+6.7%",
-    trend: "up",
-    icon: ArrowUpRight,
-    color: "text-success",
-  },
-  {
-    title: "Total Expenses",
-    value: "$6,600",
-    change: "+6.3%",
-    trend: "down",
-    icon: ArrowDownRight,
-    color: "text-destructive",
-  },
-  {
-    title: "Net Savings",
-    value: "$2,700",
-    change: "+7.7%",
-    trend: "up",
-    icon: TrendingUp,
-    color: "text-success",
-  },
-  {
-    title: "Goals Progress",
-    value: "3 of 5",
-    change: "60%",
-    trend: "up",
-    icon: Target,
-    color: "text-primary",
-  },
-];
+import { useFinancialData } from "@/contexts/FinancialDataContext";
 
 export const FinancialOverview = () => {
+  const { expenses, income, budgets, goals } = useFinancialData();
+
+  // Calculate real totals
+  const totalIncome = useMemo(() => 
+    income.reduce((sum, i) => sum + i.amount, 0), [income]
+  );
+  
+  const totalExpenses = useMemo(() => 
+    expenses.reduce((sum, e) => sum + e.amount, 0), [expenses]
+  );
+
+  const netSavings = useMemo(() => 
+    totalIncome - totalExpenses, [totalIncome, totalExpenses]
+  );
+
+  const activeGoals = useMemo(() => 
+    goals.filter(g => !g.isCompleted), [goals]
+  );
+
+  const completedGoals = useMemo(() => 
+    goals.filter(g => g.isCompleted), [goals]
+  );
+
+  // Calculate monthly data from actual transactions
+  const monthlyData = useMemo(() => {
+    const monthMap = new Map();
+    
+    // Process expenses
+    expenses.forEach(e => {
+      const date = new Date(e.date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      if (!monthMap.has(monthKey)) {
+        monthMap.set(monthKey, { month: date.toLocaleString('default', { month: 'short' }), income: 0, expenses: 0, savings: 0 });
+      }
+      monthMap.get(monthKey).expenses += e.amount;
+    });
+
+    // Process income
+    income.forEach(i => {
+      const date = new Date(i.date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      if (!monthMap.has(monthKey)) {
+        monthMap.set(monthKey, { month: date.toLocaleString('default', { month: 'short' }), income: 0, expenses: 0, savings: 0 });
+      }
+      monthMap.get(monthKey).income += i.amount;
+    });
+
+    // Calculate savings
+    monthMap.forEach(data => {
+      data.savings = data.income - data.expenses;
+    });
+
+    return Array.from(monthMap.values()).slice(-6); // Last 6 months
+  }, [expenses, income]);
+
+  const stats = useMemo(() => [
+    {
+      title: "Total Income",
+      value: `$${totalIncome.toFixed(2)}`,
+      change: "+0%",
+      trend: "up",
+      icon: ArrowUpRight,
+      color: "text-success",
+    },
+    {
+      title: "Total Expenses",
+      value: `$${totalExpenses.toFixed(2)}`,
+      change: "+0%",
+      trend: "down",
+      icon: ArrowDownRight,
+      color: "text-destructive",
+    },
+    {
+      title: "Net Savings",
+      value: `$${netSavings.toFixed(2)}`,
+      change: netSavings >= 0 ? "+0%" : "-0%",
+      trend: netSavings >= 0 ? "up" : "down",
+      icon: TrendingUp,
+      color: netSavings >= 0 ? "text-success" : "text-destructive",
+    },
+    {
+      title: "Goals Progress",
+      value: `${completedGoals.length} of ${goals.length}`,
+      change: `${goals.length > 0 ? Math.round((completedGoals.length / goals.length) * 100) : 0}%`,
+      trend: "up",
+      icon: Target,
+      color: "text-primary",
+    },
+  ], [totalIncome, totalExpenses, netSavings, completedGoals.length, goals.length]);
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
