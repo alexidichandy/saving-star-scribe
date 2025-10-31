@@ -64,7 +64,7 @@ export const FinancialChatbot = () => {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-gradient-primary shadow-lg hover:shadow-xl transition-all"
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-gradient-primary shadow-card-hover hover:scale-105 transition-all"
         size="icon"
       >
         <MessageCircle className="h-6 w-6" />
@@ -73,10 +73,10 @@ export const FinancialChatbot = () => {
   }
 
   return (
-    <Card className="fixed bottom-6 right-6 w-96 shadow-2xl z-50">
-      <CardHeader className="bg-gradient-primary text-primary-foreground rounded-t-lg">
+    <Card className="fixed bottom-6 right-6 w-96 border-border z-50" style={{ boxShadow: 'var(--shadow-chatbot)' }}>
+      <CardHeader className="bg-gradient-primary text-primary-foreground">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <MessageCircle className="h-5 w-5" />
             Financial Assistant
           </CardTitle>
@@ -84,41 +84,41 @@ export const FinancialChatbot = () => {
             variant="ghost"
             size="icon"
             onClick={() => setIsOpen(false)}
-            className="hover:bg-primary-foreground/20"
+            className="h-8 w-8 hover:bg-primary-foreground/10 text-primary-foreground"
           >
             <X className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="h-96 overflow-y-auto p-4 space-y-4">
+        <div className="h-96 overflow-y-auto p-4 space-y-3 bg-background">
           {messages.map(message => (
             <div
               key={message.id}
               className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
+                className={`max-w-[80%] rounded-lg p-3 shadow-sm ${
                   message.role === "user"
                     ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-foreground"
+                    : "bg-card border border-border text-card-foreground"
                 }`}
               >
-                <p className="text-sm">{message.content}</p>
+                <p className="text-sm leading-relaxed">{message.content}</p>
               </div>
             </div>
           ))}
         </div>
-        <div className="border-t border-border p-4">
+        <div className="border-t border-border p-4 bg-card">
           <div className="flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask about your finances..."
-              className="flex-1"
+              className="flex-1 h-10"
             />
-            <Button onClick={handleSend} size="icon" className="bg-gradient-primary">
+            <Button onClick={handleSend} size="icon" className="bg-gradient-primary h-10 w-10">
               <Send className="h-4 w-4" />
             </Button>
           </div>

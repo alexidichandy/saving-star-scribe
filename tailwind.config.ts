@@ -62,8 +62,17 @@ export default {
         "gradient-hero": "var(--gradient-hero)",
       },
       boxShadow: {
+        sm: "var(--shadow-sm)",
         card: "var(--shadow-card)",
         "card-hover": "var(--shadow-card-hover)",
+        chatbot: "var(--shadow-chatbot)",
+      },
+      spacing: {
+        xs: "var(--spacing-xs)",
+        sm: "var(--spacing-sm)",
+        md: "var(--spacing-md)",
+        lg: "var(--spacing-lg)",
+        xl: "var(--spacing-xl)",
       },
       transitionProperty: {
         smooth: "var(--transition-smooth)",
