@@ -115,14 +115,14 @@ export const DashboardHeader = () => {
                   <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center">
                     <User className="h-4 w-4 text-primary-foreground" />
                   </div>
-                  <span className="hidden md:inline text-sm font-medium">John Doe</span>
+                  <span className="hidden md:inline text-sm font-medium">RMIT STUDENT</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-card border-border z-50">
                 <DropdownMenuLabel>
                   <div>
-                    <p className="font-semibold">John Doe</p>
-                    <p className="text-xs text-muted-foreground">john.doe@example.com</p>
+                    <p className="font-semibold">RMIT STUDENT</p>
+                    <p className="text-xs text-muted-foreground">student@rmit.edu.au</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
