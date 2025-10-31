@@ -10,8 +10,8 @@ export const DashboardHeader = () => {
               <Wallet className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Finalyser</h1>
-              <p className="text-sm text-muted-foreground">Your Personal Finance Dashboard</p>
+              <h1 className="text-2xl font-bold text-foreground">Finalyzer</h1>
+              <p className="text-sm text-muted-foreground">Your Personal Financial Assistant</p>
             </div>
           </div>
           <div className="text-right">
